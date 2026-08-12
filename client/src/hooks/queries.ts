@@ -435,7 +435,13 @@ export function useUpsertMarks() {
   return useMutation({
     mutationFn: (body: {
       subjectId: number;
-      assessmentType: 'MID_TERM' | 'FINAL_TERM';
+      assessmentType:
+  | 'SESSIONAL'
+  | 'MID_TERM'
+  | 'ASSIGNMENT'
+  | 'FINAL_TERM'
+  | 'PRACTICAL'
+  | 'VIVA';
       records: { studentId: number; obtainedMarks: number; totalMarks: number }[];
     }) => api.post('/marks/upsert', body),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['marks'] }),
