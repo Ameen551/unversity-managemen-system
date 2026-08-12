@@ -15,7 +15,4 @@ export default defineConfig({
     },
   },
 });
-export default defineConfig({
-  base: './',
-  plugins: [react(), tailwindcss()],
 base: './',
