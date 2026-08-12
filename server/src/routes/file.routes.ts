@@ -1,0 +1,30 @@
+import { Router } from 'express';
+import {
+  downloadUpload,
+  getTemplate,
+  importStudentsHandler,
+  listUploads,
+  uploadMiddleware,
+  uploadPhotoMiddleware,
+  uploadPhoto,
+  servePhoto,
+  generalUploadMiddleware,
+  generalUpload,
+  deleteUpload,
+} from '../controllers/file.controller';
+import { requireAuth, requireAdmin } from '../middleware/auth';
+
+const router = Router();
+
+router.use(requireAuth);
+
+router.get('/template', getTemplate);
+router.get('/', listUploads);
+router.post('/import', uploadMiddleware, importStudentsHandler);
+router.post('/upload', generalUploadMiddleware, generalUpload);
+router.post('/photo', uploadPhotoMiddleware, uploadPhoto);
+router.get('/photo/:fileName', servePhoto);
+router.get('/:id/download', downloadUpload);
+router.delete('/:id', requireAdmin(), deleteUpload);
+
+export default router;

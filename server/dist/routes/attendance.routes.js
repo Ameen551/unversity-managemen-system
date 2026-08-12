@@ -1,0 +1,12 @@
+import { Router } from 'express';
+import { attendanceDates, attendanceSummary, deleteAttendance, listAttendance, markAttendance, updateAttendance, } from '../controllers/attendance.controller';
+import { requireAuth, requireAdmin } from '../middleware/auth';
+const router = Router();
+router.use(requireAuth);
+router.get('/', listAttendance);
+router.get('/summary', attendanceSummary);
+router.get('/dates', attendanceDates);
+router.post('/mark', markAttendance);
+router.put('/:id', updateAttendance);
+router.delete('/:id', requireAdmin(), deleteAttendance);
+export default router;

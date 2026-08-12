@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { createConfig, deleteConfig, listConfigs, updateConfig } from '../controllers/settings.controller';
+import { requireAuth, requireAdmin } from '../middleware/auth';
+const router = Router();
+router.use(requireAuth);
+router.get('/', listConfigs);
+router.post('/', requireAdmin(), createConfig);
+router.put('/:id', requireAdmin(), updateConfig);
+router.delete('/:id', requireAdmin(), deleteConfig);
+export default router;

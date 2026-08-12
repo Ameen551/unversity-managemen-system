@@ -1,0 +1,36 @@
+import { Router } from 'express';
+import authRoutes from './auth.routes';
+import departmentRoutes from './department.routes';
+import sessionRoutes from './session.routes';
+import semesterRoutes from './semester.routes';
+import subjectRoutes from './subject.routes';
+import studentRoutes from './student.routes';
+import attendanceRoutes from './attendance.routes';
+import marksRoutes from './marks.routes';
+import reportRoutes from './report.routes';
+import fileRoutes from './file.routes';
+import enrollmentRoutes from './enrollment.routes';
+import teacherRoutes from './teacher.routes';
+import auditRoutes from './audit.routes';
+import dashboardRoutes from './dashboard.routes';
+import settingsRoutes from './settings.routes';
+
+const router = Router();
+
+router.use('/auth', authRoutes);
+router.use('/departments', departmentRoutes);
+router.use('/sessions', sessionRoutes);
+router.use('/semesters', semesterRoutes);
+router.use('/subjects', subjectRoutes);
+router.use('/students', studentRoutes);
+router.use('/attendance', attendanceRoutes);
+router.use('/marks', marksRoutes);
+router.use('/reports', reportRoutes);
+router.use('/files', fileRoutes);
+router.use('/enrollments', enrollmentRoutes);
+router.use('/teachers', teacherRoutes);
+router.use('/audit-logs', auditRoutes);
+router.use('/dashboard', dashboardRoutes);
+router.use('/settings', settingsRoutes);
+
+export default router;

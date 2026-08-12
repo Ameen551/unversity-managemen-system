@@ -1,0 +1,21 @@
+import { Router } from 'express';
+import {
+  deleteMarks,
+  listAssessmentConfigs,
+  listMarks,
+  updateMarks,
+  upsertMarks,
+} from '../controllers/marks.controller';
+import { requireAuth, requireAdmin } from '../middleware/auth';
+
+const router = Router();
+
+router.use(requireAuth);
+
+router.get('/', listMarks);
+router.get('/assessment-configs', listAssessmentConfigs);
+router.post('/upsert', upsertMarks);
+router.put('/:id', updateMarks);
+router.delete('/:id', requireAdmin(), deleteMarks);
+
+export default router;

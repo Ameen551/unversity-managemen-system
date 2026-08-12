@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { createSession, deleteSession, listSessions, updateSession, } from '../controllers/session.controller';
+import { requireAuth, requireAdmin } from '../middleware/auth';
+const router = Router();
+router.use(requireAuth);
+router.get('/', listSessions);
+router.post('/', requireAdmin(), createSession);
+router.put('/:id', requireAdmin(), updateSession);
+router.delete('/:id', requireAdmin(), deleteSession);
+export default router;

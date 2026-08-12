@@ -1,0 +1,292 @@
+// =============================================================
+// University Portal — Prisma schema
+//
+// Database portability:
+//   Local development uses SQLite (provider = "sqlite") for
+//   zero-setup. For production PostgreSQL, change the provider
+//   below to "postgresql" and update DATABASE_URL, then run
+//   `npx prisma migrate dev` again. No application code changes
+//   are required because all role/status/type fields are plain
+//   strings (no database-native enums).
+// =============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ------------------------- Users ------------------------------
+// role: "ADMIN" | "HOD" | "TEACHER"
+model User {
+  id           Int       @id @default(autoincrement())
+  username     String    @unique
+  passwordHash String
+  fullName     String
+  email        String?
+  role         String    @default("TEACHER")
+  departmentId Int?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // New fields for teacher management
+  employeeId   String?   @unique
+  phone        String?
+  designation  String?   // Professor, Associate Professor, Lecturer, etc.
+  qualification String?  // PhD, MPhil, MS, BS, etc.
+  photo        String?   // Path to profile photo
+
+  createdStudents  Student[]      @relation("CreatedStudents")
+  markedAttendance Attendance[]   @relation("MarkedAttendance")
+  updatedMarks     Marks[]        @relation("UpdatedMarks")
+  uploadedFiles    UploadedFile[]
+  auditLogs        AuditLog[]
+  taughtSubjects   Subject[]      @relation("TaughtSubjects")
+}
+
+// ------------------------- Departments ------------------------
+model Department {
+  id          Int      @id @default(autoincrement())
+  name        String
+  code        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users             User[]
+  semesters         Semester[]
+  subjects          Subject[]
+  students          Student[]
+  assessmentConfigs AssessmentConfig[]
+
+  @@index([isActive, sortOrder])
+}
+
+// ------------------------- Sessions ---------------------------
+// e.g. "2020 - 2024", "2024 - 2028"
+model Session {
+  id        Int      @id @default(autoincrement())
+  label     String   @unique
+  startYear Int
+  endYear   Int
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subjects Subject[]
+  students Student[]
+
+  @@index([isActive])
+}
+
+// ------------------------- Semesters --------------------------
+// Semesters are configured per department (programs like DPT and
+// Pharm-D may need more semesters than others).
+model Semester {
+  id           Int       @id @default(autoincrement())
+  name         String
+  number       Int
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id])
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  subjects Subject[]
+  students Student[]
+
+  @@unique([departmentId, number])
+  @@index([departmentId, isActive])
+}
+
+// ------------------------- Subjects ---------------------------
+// A subject is scoped to Department + Session + Semester so that
+// only relevant subjects are ever shown.
+model Subject {
+  id           Int      @id @default(autoincrement())
+  name         String
+  code         String
+  creditHours  Int      @default(3)
+  description  String?
+  departmentId Int
+  sessionId    Int
+  semesterId   Int
+  teacherId    Int?     // Assigned teacher (optional)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  department Department @relation(fields: [departmentId], references: [id])
+  session    Session    @relation(fields: [sessionId], references: [id])
+  semester   Semester   @relation(fields: [semesterId], references: [id])
+  teacher    User?      @relation("TaughtSubjects", fields: [teacherId], references: [id])
+
+  enrollments Enrollment[]
+  attendance  Attendance[]
+  marks       Marks[]
+
+  @@unique([code, departmentId, sessionId, semesterId])
+  @@index([departmentId, sessionId, semesterId])
+}
+
+// ------------------------- Students ---------------------------
+// Soft-delete via isDeleted so admins can restore and teachers can
+// never permanently destroy records.
+model Student {
+  id              Int       @id @default(autoincrement())
+  name            String
+  fatherName      String
+  studentId       String    @unique
+  admissionNumber String?   // Formal admission/registration number
+  section         String?
+  departmentId    Int
+  sessionId       Int
+  semesterId      Int
+  createdById     Int?
+  createdBy       User?     @relation("CreatedStudents", fields: [createdById], references: [id])
+  isDeleted       Boolean   @default(false)
+  deletedAt       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // New fields for complete student profile
+  photo           String?   // Path to student photo
+  dateOfBirth     DateTime?
+  gender          String?   // "MALE" | "FEMALE" | "OTHER"
+  phone           String?
+  email           String?
+  address         String?
+  cnic            String?   // National ID card number
+
+  department Department @relation(fields: [departmentId], references: [id])
+  session    Session    @relation(fields: [sessionId], references: [id])
+  semester   Semester   @relation(fields: [semesterId], references: [id])
+
+  enrollments Enrollment[]
+  attendance  Attendance[]
+  marks       Marks[]
+
+  @@index([departmentId, sessionId, semesterId])
+  @@index([isDeleted])
+}
+
+// ------------------------- Enrollments -------------------------
+// Student <-> Subject (many-to-many)
+model Enrollment {
+  id        Int      @id @default(autoincrement())
+  studentId Int
+  subjectId Int
+  createdAt DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id])
+  subject Subject @relation(fields: [subjectId], references: [id])
+
+  @@unique([studentId, subjectId])
+}
+
+// ------------------------- Attendance --------------------------
+// status: "PRESENT" | "ABSENT" | "LEAVE"
+model Attendance {
+  id         Int      @id @default(autoincrement())
+  studentId  Int
+  subjectId  Int
+  date       DateTime
+  lectureNo  Int      @default(1)
+  status     String
+  markedById Int?
+  markedBy   User?    @relation("MarkedAttendance", fields: [markedById], references: [id])
+  createdAt  DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id])
+  subject Subject @relation(fields: [subjectId], references: [id])
+
+  @@unique([studentId, subjectId, date, lectureNo])
+  @@index([subjectId, date])
+}
+
+// ------------------------- Marks -------------------------------
+// assessmentType: "SESSIONAL" | "MID_TERM" | "ASSIGNMENT" | "FINAL_TERM" | "PRACTICAL" | "VIVA"
+model Marks {
+  id             Int      @id @default(autoincrement())
+  studentId      Int
+  subjectId      Int
+  assessmentType String
+  obtainedMarks  Float
+  totalMarks     Float
+  remarks        String?  // Teacher comments/feedback
+  updatedById    Int?
+  updatedBy      User?    @relation("UpdatedMarks", fields: [updatedById], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id])
+  subject Subject @relation(fields: [subjectId], references: [id])
+
+  @@unique([studentId, subjectId, assessmentType])
+}
+
+// ------------------- Assessment configuration ------------------
+// Admin-configurable marking structures (e.g. total 40 / 50 / 100).
+// allowedTotals is a JSON array serialised as a string.
+// assessmentType: "SESSIONAL" | "MID_TERM" | "ASSIGNMENT" | "FINAL_TERM" | "PRACTICAL" | "VIVA"
+model AssessmentConfig {
+  id             Int       @id @default(autoincrement())
+  assessmentType String    // MID_TERM | FINAL_TERM
+  label          String
+  defaultTotal   Float
+  allowedTotals  String    // JSON array, e.g. "[40,50,100,500]"
+  editable       Boolean   @default(true)
+  departmentId   Int?
+  department     Department? @relation(fields: [departmentId], references: [id])
+  isActive       Boolean     @default(true)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+// ------------------------- Uploaded files ----------------------
+model UploadedFile {
+  id           Int      @id @default(autoincrement())
+  originalName String
+  storedName   String
+  fileType     String   // XLSX | CSV | GENERAL
+  status       String   // COMPLETED | PARTIAL | FAILED
+  rowCount     Int      @default(0)
+  successCount Int      @default(0)
+  errorCount   Int      @default(0)
+  departmentId Int?
+  sessionId    Int?
+  semesterId   Int?
+  uploadedById Int?
+  uploadedBy   User?    @relation(fields: [uploadedById], references: [id])
+  createdAt    DateTime @default(now())
+
+  @@index([departmentId, sessionId, semesterId])
+}
+
+// ------------------------- Audit log ---------------------------
+model AuditLog {
+  id          Int      @id @default(autoincrement())
+  userId      Int?
+  userRole    String?
+  action      String   // CREATE | UPDATE | DELETE | RESTORE | LOGIN | IMPORT | EXPORT ...
+  entityType  String
+  entityId    String?
+  description String?
+  meta        String?  // JSON payload snapshot
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([createdAt])
+}

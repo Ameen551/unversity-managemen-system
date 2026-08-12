@@ -1,0 +1,5 @@
+﻿Student Name,Father Name,Student ID / Roll Number,Section
+Bilal Ahmed,Ahmed Ali,PHARM-2020-002,B
+Sana Yousaf,Imran Yousaf,PHARM-2020-003,A
+PHARM-2020-001,Already Exists,Dup Row,C
+,,PHARM-2020-004,MISSING

@@ -1,0 +1,79 @@
+AppError: Authentication required
+    at Object.unauthorized (C:\Users\mawai\Desktop\database\server\src\utils\AppError.ts:17:58)
+    at requireAuth (C:\Users\mawai\Desktop\database\server\src\middleware\auth.ts:74:20)
+    at Layer.handle [as handle_request] (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:286:9
+    at router.process_params (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:280:10)
+    at router.handle (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:175:3)
+    at router (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:47:12)
+    at Layer.handle [as handle_request] (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:286:9
+    at router.process_params (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:280:10)
+    at router.handle (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:175:3)
+    at router (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:47:12)
+ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "number",
+    "received": "null",
+    "path": [
+      "semesterId"
+    ],
+    "message": "Expected number, received null"
+  }
+]
+    at get error (file:///C:/Users/mawai/Desktop/database/server/node_modules/zod/v3/types.js:39:31)
+    at ZodObject.parse (file:///C:/Users/mawai/Desktop/database/server/node_modules/zod/v3/types.js:114:22)
+    at <anonymous> (C:\Users\mawai\Desktop\database\server\src\controllers\student.controller.ts:144:30)
+    at <anonymous> (C:\Users\mawai\Desktop\database\server\src\utils\asyncHandler.ts:8:5)
+    at Layer.handle [as handle_request] (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:284:15
+    at router.process_params (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:280:10)
+    at requireAuth (C:\Users\mawai\Desktop\database\server\src\middleware\auth.ts:92:5)
+ZodError: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email",
+    "path": [
+      "email"
+    ]
+  }
+]
+    at get error (file:///C:/Users/mawai/Desktop/database/server/node_modules/zod/v3/types.js:39:31)
+    at ZodObject.parse (file:///C:/Users/mawai/Desktop/database/server/node_modules/zod/v3/types.js:114:22)
+    at <anonymous> (C:\Users\mawai\Desktop\database\server\src\controllers\student.controller.ts:144:30)
+    at <anonymous> (C:\Users\mawai\Desktop\database\server\src\utils\asyncHandler.ts:8:5)
+    at Layer.handle [as handle_request] (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:284:15
+    at router.process_params (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:280:10)
+    at requireAuth (C:\Users\mawai\Desktop\database\server\src\middleware\auth.ts:92:5)
+AppError: Session expired. Please log in again.
+    at Object.unauthorized (C:\Users\mawai\Desktop\database\server\src\utils\AppError.ts:17:58)
+    at requireAuth (C:\Users\mawai\Desktop\database\server\src\middleware\auth.ts:79:20)
+    at Layer.handle [as handle_request] (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:286:9
+    at router.process_params (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:280:10)
+    at router.handle (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:175:3)
+    at router (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:47:12)
+    at Layer.handle [as handle_request] (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:286:9
+    at router.process_params (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:280:10)
+    at router.handle (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:175:3)
+    at router (C:\Users\mawai\Desktop\database\server\node_modules\express\lib\router\index.js:47:12)
